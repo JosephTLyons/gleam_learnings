@@ -1,29 +1,6 @@
 import gleam/bool
-import gleam/io
 import gleam/list
 import gleam/result
-
-pub fn main() {
-  let items =
-    ["dog", "cat", "mouse", "man", "boy"]
-    |> list.repeat(10)
-    |> list.flatten()
-    |> list.shuffle()
-
-  items
-  |> list.unique()
-  |> print_list()
-}
-
-pub fn print_list(items: List(String)) {
-  case items {
-    [] -> Nil
-    [first, ..rest] -> {
-      io.println(first)
-      print_list(rest)
-    }
-  }
-}
 
 pub opaque type Pegs {
   Pegs(state: List(List(Int)))
