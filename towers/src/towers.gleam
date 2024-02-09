@@ -28,12 +28,12 @@ pub fn move_ring(pegs: Pegs, from: Int, to: Int) -> Result(Pegs, GameError) {
     |> list.pop(fn(_) { True })
     |> result.map_error(fn(_) { NoRingToMove }),
   )
-  let from_ring_is_smaller =
+  let from_ring_is_bigger =
     to_peg
     |> list.first()
-    |> result.map(fn(to_ring) { from_ring < to_ring })
-    |> result.unwrap(True)
-  use <- bool.guard(!from_ring_is_smaller, Error(BiggerRingOnSmallerRing))
+    |> result.map(fn(to_ring) { from_ring > to_ring })
+    |> result.unwrap(False)
+  use <- bool.guard(from_ring_is_bigger, Error(BiggerRingOnSmallerRing))
   let to_peg = [from_ring, ..to_peg]
   use pegs <- result.try(update_state(pegs, from, from_rest))
   use pegs <- result.try(update_state(pegs, to, to_peg))
@@ -49,14 +49,14 @@ pub fn get_peg(pegs: Pegs, peg_number: Int) -> Result(List(Int), GameError) {
 pub fn update_state(
   pegs: Pegs,
   peg_number: Int,
-  peg: List(Int),
+  new_peg: List(Int),
 ) -> Result(Pegs, GameError) {
   use <- bool.guard(peg_number >= list.length(pegs.state), Error(InvalidPeg))
   let new_state =
     pegs.state
     |> list.index_map(fn(existing_peg, i) {
       case i == peg_number {
-        True -> peg
+        True -> new_peg
         False -> existing_peg
       }
     })
