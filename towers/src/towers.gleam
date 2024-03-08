@@ -1,9 +1,17 @@
 import gleam/bool
+import gleam/io
+import gleam/int
 import gleam/list
 import gleam/result
+import gleam/string
 
 pub opaque type Pegs {
   Pegs(state: List(List(Int)))
+}
+
+pub type GameStatus {
+  Playing(pegs: Pegs)
+  Won
 }
 
 pub type GameError {
@@ -61,4 +69,38 @@ pub fn update_state(
       }
     })
   Ok(Pegs(state: new_state))
+}
+
+pub fn print(pegs: Pegs) -> Result(Nil, Nil) {
+  use lines <- result.try(get_print_lines(pegs))
+  let lines =
+    lines
+    |> string.join("\n")
+  io.println(lines)
+  Ok(Nil)
+}
+
+pub fn get_print_lines(pegs: Pegs) -> Result(List(String), Nil) {
+  do_get_print_lines(pegs.state, [])
+}
+
+fn do_get_print_lines(
+  items: List(List(Int)),
+  acc: List(String),
+) -> Result(List(String), Nil) {
+  case items {
+    [] -> Ok(acc)
+    [peg, ..pegs] -> {
+      let peg_string =
+        peg
+        // Remove this by fixing how we store rings in the pegs (use queue)
+        |> list.reverse
+        |> list.map(int.to_string)
+        |> string.join(" ")
+      let acc =
+        acc
+        |> list.append([peg_string])
+      do_get_print_lines(pegs, acc)
+    }
+  }
 }

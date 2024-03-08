@@ -45,3 +45,27 @@ pub fn move_ring_test() {
     pegs
     |> towers.move_ring(0, 1)
 }
+
+pub fn print_test() {
+  let pegs = towers.initialize(4)
+
+  pegs
+  |> towers.get_print_lines
+  |> should.equal(Ok(["4 3 2 1", "", ""]))
+
+  let assert Ok(pegs) =
+    pegs
+    |> towers.move_ring(0, 1)
+
+  pegs
+  |> towers.get_print_lines
+  |> should.equal(Ok(["4 3 2", "1", ""]))
+
+  let assert Ok(pegs) =
+    pegs
+    |> towers.move_ring(0, 2)
+
+  pegs
+  |> towers.get_print_lines
+  |> should.equal(Ok(["4 3", "1", "2"]))
+}
